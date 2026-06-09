@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-N7BXK075EG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-N7BXK075EG');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="description" content="Guess the Premier League player from their career path">
+  <meta name="keywords" content="Football, Premier League, Career Path, Quiz, Daily Challenge">
+  <meta name="author" content="Ryan Whitehouse">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1196130330595972" crossorigin="anonymous"></script>
+  <title>PL Career Paths</title>
+  <script defer src="new_career_path_js.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      transition: background-color 0.4s, color 0.4s;
+    }
+ 
+    /* MODE THEMES */
+    body.mode-home     { background-color: #1a6b1a; color: white; }
+    body.mode-freeplay { background-color: #1a6b1a; color: white; }
+    body.mode-daily    { background-color: #0d1b3e; color: #f0d080; }
+    body.mode-challenge{ background-color: #1a0000; color: white; }
+ 
+    h1 { text-align: center; margin-bottom: 24px; font-size: 1.8rem; }
+ 
+    /* HOME SCREEN */
+    #home-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 40px;
+    }
+    #home-screen h1 { font-size: 2rem; }
+    #home-screen p  { text-align: center; opacity: 0.85; margin-bottom: 8px; }
+ 
+    .mode-card {
+      width: 100%;
+      padding: 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .mode-card:hover { transform: scale(1.02); opacity: 0.92; }
+    .mode-card.green  { background-color: #2e8b2e; color: white; }
+    .mode-card.navy   { background-color: #1a3a7a; color: #f0d080; }
+    .mode-card.red    { background-color: #8b0000; color: white; }
+    .mode-card .card-sub { font-size: 0.85rem; font-weight: normal; margin-top: 4px; opacity: 0.85; }
+ 
+    /* GAME SCREENS */
+    .game-screen { display: none; width: 100%; max-width: 600px; flex-direction: column; align-items: stretch; }
+    .game-screen.active { display: flex; }
+ 
+    .back-btn {
+      background: none;
+      border: 1px solid currentColor;
+      color: inherit;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      align-self: flex-start;
+      opacity: 0.7;
+    }
+    .back-btn:hover { opacity: 1; }
+ 
+    /* HUD */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 1rem;
+      font-weight: bold;
+      min-height: 32px;
+    }
+    .lives-display { font-size: 1.3rem; letter-spacing: 4px; }
+    .streak-display { font-size: 1rem; }
+ 
+    /* INFOBOX */
+    .infobox-wrap {
+      background: white;
+      color: black;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      width: 100%;
+      min-height: 60px;
+    }
+    .infobox-wrap table { width: 100%; }
+    .infobox-wrap a { pointer-events: none; color: black; text-decoration: none; }
+    .infobox-wrap .hidden { display: none; }
+ 
+    /* HINT */
+    .hint-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .hint-btn {
+      padding: 7px 14px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.15);
+      color: inherit;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .hint-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .hint-btn:hover:not(:disabled) { background: rgba(255,255,255,0.25); }
+    .hint-text { font-size: 1rem; font-weight: bold; letter-spacing: 3px; }
+ 
+    /* INPUTS */
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+    input { text-align: center; }
+    input::placeholder { text-align: center; }
+ 
+    /* BUTTONS */
+    .btn {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      font-weight: bold;
+      transition: opacity 0.15s, background-color 0.15s;
+    }
+    .btn:hover:not(:disabled) { opacity: 0.85; }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary   { background: #fff; color: #111; }
+    .btn-secondary { background: rgba(255,255,255,0.15); color: inherit; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-danger    { background: #c0392b; color: white; }
+    .btn-share     { background: #27ae60; color: white; }
+ 
+    /* RESULT */
+    #fp-result, #daily-result, #ch-result {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: bold;
+      min-height: 28px;
+      margin: 8px 0;
+    }
+ 
+    /* GAME OVER */
+    #gameover-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 40px;
+    }
+    #gameover-screen.active { display: flex; }
+    #gameover-screen h2 { font-size: 2rem; }
+    #gameover-screen .final-score { font-size: 3rem; font-weight: bold; }
+ 
+    /* DAILY STREAK BAR */
+    .guess-dots { display: flex; gap: 8px; justify-content: center; margin: 8px 0; }
+    .guess-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem;
+    }
+    .guess-dot.correct { background: #27ae60; }
+    .guess-dot.wrong   { background: #c0392b; }
+    .guess-dot.current { background: rgba(255,255,255,0.4); }
+ 
+    /* DAILY STREAK */
+    .daily-streak-bar {
+      display: flex;
+      justify-content: space-between;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+ 
+    @media (max-width: 480px) {
+      h1 { font-size: 1.4rem; }
+      .mode-card { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body class="mode-home">
+ 
+  <!-- HOME SCREEN -->
+  <div id="home-screen">
+    <h1>⚽ PL Career Paths</h1>
+    <p>Guess the Premier League player from their career path</p>
+    <button class="mode-card green" onclick="startMode('freeplay')">
+      Free Play
+      <div class="card-sub">Filter by team · No pressure · Unlimited</div>
+    </button>
+    <button class="mode-card navy" onclick="startMode('daily')">
+      Daily Challenge
+      <div class="card-sub">One player per day · Same for everyone · Share your result</div>
+    </button>
+    <button class="mode-card red" onclick="startMode('challenge')">
+      Challenge Mode
+      <div class="card-sub">3 lives · 3 guesses per player · How long can you last?</div>
+    </button>
+  </div>
+ 
+  <!-- FREE PLAY -->
+  <div id="freeplay-screen" class="game-screen">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h1>Free Play</h1>
+    <select id="fp-team-filter" onchange="fpSetTeam(this.value)">
+      <option value="">Any Team</option>
+      <option>Arsenal</option><option>Aston Villa</option><option>Barnsley</option>
+      <option>Birmingham City</option><option>Blackburn Rovers</option><option>Blackpool</option>
+      <option>Bolton Wanderers</option><option>Bournemouth</option><option>Bradford City</option>
+      <option>Brentford</option><option>Brighton &amp; Hove Albion</option><option>Burnley</option>
+      <option>Cardiff City</option><option>Charlton Athletic</option><option>Chelsea</option>
+      <option>Coventry City</option><option>Crystal Palace</option><option>Derby County</option>
+      <option>Everton</option><option>Fulham</option><option>Huddersfield Town</option>
+      <option>Hull City</option><option>Ipswich Town</option><option>Leeds United</option>
+      <option>Leicester City</option><option>Liverpool</option><option>Luton Town</option>
+      <option>Manchester City</option><option>Manchester United</option><option>Middlesbrough</option>
+      <option>Newcastle United</option><option>Norwich City</option><option>Nottingham Forest</option>
+      <option>Oldham Athletic</option><option>Portsmouth</option><option>Queens Park Rangers</option>
+      <option>Reading</option><option>Sheffield United</option><option>Sheffield Wednesday</option>
+      <option>Southampton</option><option>Stoke City</option><option>Sunderland</option>
+      <option>Swansea City</option><option>Swindon Town</option><option>Tottenham Hotspur</option>
+      <option>Watford</option><option>West Bromwich Albion</option><option>West Ham United</option>
+      <option>Wigan Athletic</option><option>Wimbledon</option><option>Wolverhampton Wanderers</option>
+    </select>
+    <div class="infobox-wrap" id="fp-infobox">Loading...</div>
+    <input list="fp-footballer-list" type="text" id="fp-guess-input" placeholder="Guess the footballer">
+    <datalist id="fp-footballer-list"></datalist>
+    <div id="fp-result"></div>
+    <button class="btn btn-primary" id="fp-btn-submit" onclick="fpCheckGuess()">Submit Guess</button>
+    <button class="btn btn-secondary" id="fp-btn-reveal" onclick="fpReveal()">Reveal Answer</button>
+    <button class="btn btn-secondary" onclick="fpNext()">Next Player</button>
+    <button class="btn btn-secondary" onclick="sharePage()">Share</button>
+  </div>
+ 
+  <!-- DAILY CHALLENGE -->
+  <div id="daily-screen" class="game-screen">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h1>Daily Challenge</h1>
+    <div class="daily-streak-bar">
+      <span>📅 <span id="daily-date"></span></span>
+      <span>🔥 Streak: <span id="daily-streak-count">0</span></span>
+    </div>
+    <div class="hint-area">
+      <button class="hint-btn" id="daily-hint-btn" onclick="dailyUseHint()">💡 Hint (<span id="daily-hints-left">3</span> left)</button>
+      <span class="hint-text" id="daily-hint-text"></span>
+    </div>
+    <div class="infobox-wrap" id="daily-infobox">Loading...</div>
+    <div class="guess-dots" id="daily-guess-dots">
+      <div class="guess-dot current">1</div>
+      <div class="guess-dot">2</div>
+      <div class="guess-dot">3</div>
+    </div>
+    <input list="daily-footballer-list" type="text" id="daily-guess-input" placeholder="Guess the footballer">
+    <datalist id="daily-footballer-list"></datalist>
+    <div id="daily-result"></div>
+    <button class="btn btn-primary" id="daily-btn-submit" onclick="dailyCheckGuess()">Submit Guess</button>
+    <button class="btn btn-secondary" id="daily-btn-reveal" onclick="dailyReveal()">Reveal Answer</button>
+    <button class="btn btn-share" id="daily-btn-share" style="display:none" onclick="dailyShare()">Share Result</button>
+  </div>
+ 
+  <!-- CHALLENGE MODE -->
+  <div id="challenge-screen" class="game-screen">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h1>Challenge Mode</h1>
+    <div class="hud">
+      <div class="lives-display" id="ch-lives">❤️❤️❤️</div>
+      <div class="streak-display">🔥 Streak: <span id="ch-streak">0</span></div>
+      <div class="streak-display">Guess: <span id="ch-guess-num">1</span>/3</div>
+    </div>
+    <div class="hint-area">
+      <button class="hint-btn" id="ch-hint-btn" onclick="chUseHint()">💡 Hint (<span id="ch-hints-left">3</span> left)</button>
+      <span class="hint-text" id="ch-hint-text"></span>
+    </div>
+    <div class="infobox-wrap" id="ch-infobox">Loading...</div>
+    <input list="ch-footballer-list" type="text" id="ch-guess-input" placeholder="Guess the footballer">
+    <datalist id="ch-footballer-list"></datalist>
+    <div id="ch-result"></div>
+    <button class="btn btn-primary" id="ch-btn-submit" onclick="chCheckGuess()">Submit Guess</button>
+    <button class="btn btn-danger"  id="ch-btn-reveal" onclick="chReveal()">Reveal Answer (lose a life)</button>
+  </div>
+ 
+  <!-- GAME OVER -->
+  <div id="gameover-screen">
+    <h2>Game Over</h2>
+    <div>Final streak</div>
+    <div class="final-score" id="gameover-score">0</div>
+    <div id="gameover-msg"></div>
+    <button class="btn btn-primary" style="width:220px" onclick="chRestart()">Play Again</button>
+    <button class="btn btn-share"   style="width:220px" onclick="chShare()">Share Result</button>
+    <button class="btn btn-secondary" style="width:220px" onclick="goHome()">Home</button>
+  </div>
+ 
+</body>
+</html>
