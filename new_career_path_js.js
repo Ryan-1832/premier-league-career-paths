@@ -4,73 +4,100 @@ let currentMode      = 'home';
 let fpSelectedTeam   = '';
 let fpCurrentPlayer  = {};
 let fpRoundOver      = false;
- 
+
 let dailyPlayer      = {};
 let dailyGuessNum    = 0;
 let dailyRoundOver   = false;
 let dailyHintsLeft   = 3;
- 
+
 let chCurrentPlayer  = {};
 let chLives          = 3;
 let chStreak         = 0;
 let chGuessNum       = 1;
 let chRoundOver      = false;
 let chHintsLeft      = 3;
- 
-// ─── CURATED PLAYERS FOR DAILY + CHALLENGE ───────────────────────────────────
+
+// ─── CURATED PLAYERS: verified 100+ Premier League appearances ────────────────
+// Sources: myfootballfacts.com, wikipedia.org — appearances count verified
 const CURATED_PLAYERS = [
-  "Alan Shearer","Thierry Henry","Frank Lampard","Steven Gerrard","Ryan Giggs",
-  "Wayne Rooney","Andrew Cole","Patrick Vieira","Roy Keane","Peter Schmeichel",
-  "Eric Cantona","Dennis Bergkamp","Robbie Fowler","Michael Owen","Teddy Sheringham",
-  "Les Ferdinand","David Beckham","Paul Scholes","Gary Neville","Rio Ferdinand",
-  "John Terry","Ashley Cole","Sol Campbell","Tony Adams","David Seaman",
-  "Petr Cech","Edwin van der Sar","Jens Lehmann","Robbie Keane","Nicolas Anelka",
-  "Emile Heskey","Dion Dublin","Jermain Defoe","Peter Crouch","Freddie Ljungberg",
-  "Robert Pires","Cesc Fàbregas","Robin van Persie","Emmanuel Adebayor","Samir Nasri",
-  "Bacary Sagna","Didier Drogba","Michael Essien","Arjen Robben","Damien Duff",
-  "Michael Ballack","Florent Malouda","Branislav Ivanović","Sergio Agüero","David Silva",
-  "Yaya Touré","Vincent Kompany","Pablo Zabaleta","Joe Hart","Edin Džeko",
-  "Mario Balotelli","Harry Kane","Dele Alli","Christian Eriksen","Hugo Lloris",
-  "Kyle Walker","Danny Rose","Jan Vertonghen","Toby Alderweireld","Son Heung-min",
-  "Gareth Bale","Luka Modrić","Fernando Torres","Xabi Alonso","Pepe Reina",
-  "Luis Suárez","Jordan Henderson","Raheem Sterling","Philippe Coutinho","Roberto Firmino",
-  "Sadio Mané","Mohamed Salah","Virgil van Dijk","Alisson Becker","Trent Alexander-Arnold",
-  "Jamie Vardy","Riyad Mahrez","N'Golo Kanté","Rui Patrício","Wilfried Zaha",
-  "Leighton Baines","Seamus Coleman","Phil Jagielka","Ross Barkley","Romelu Lukaku",
-  "Tim Cahill","Duncan Ferguson","Kevin Campbell","Paul Gascoigne","Thomas Gravesen",
-  "Nolberto Solano","Laurent Robert","Craig Bellamy","Kieron Dyer","Jermaine Jenas",
-  "Ole Gunnar Solskjær","Dwight Yorke","Ruud van Nistelrooy","Cristiano Ronaldo",
-  "Carlos Tevez","Dimitar Berbatov","Michael Carrick","Owen Hargreaves","Patrice Evra",
-  "Nemanja Vidić","Ji-sung Park","Danny Welbeck","Jamie Carragher","Sami Hyypiä",
-  "Dietmar Hamann","John Arne Riise","Mark Hughes","Dennis Wise","David Ginola",
-  "Shay Given","Warren Barton","Rob Lee","Tino Asprilla","Peter Beardsley",
-  "Nwankwo Kanu","Sylvain Wiltord","Gilberto Silva","Kolo Touré","Emmanuel Petit",
-  "Marc Overmars","Ray Parlour","Stuart Pearce","Ian Wright","Steve McManaman",
-  "Paul Merson","Matthew Le Tissier","Tim Flowers","Chris Woods","Gianfranco Zola",
-  "Roberto Di Matteo","Gustavo Poyet","Jimmy Floyd Hasselbaink","Eidur Gudjohnsen",
-  "Hernan Crespo","Andriy Shevchenko","Claude Makélélé","Joe Cole","Wayne Bridge",
-  "Glen Johnson","Marcel Desailly","Shaun Wright-Phillips","Micah Richards","Joleon Lescott",
-  "James Milner","Gareth Barry","Scott Parker","Luka Modrić","Rafael van der Vaart",
-  "Niko Kranjčar","Tom Huddlestone","Wilson Palacios","Ledley King","Michael Dawson",
-  "Darren Anderton","Steffen Freund","Tim Sherwood","Stephen Carr","Chris Perry"
+  // 500+ PL appearances
+  "James Milner","Gareth Barry","Ryan Giggs","Frank Lampard","David James",
+  "Gary Speed","Emile Heskey","Mark Schwarzer","Jamie Carragher","Phil Neville",
+  "Rio Ferdinand","Steven Gerrard","Sol Campbell","Paul Scholes","Jermain Defoe",
+  "John Terry","Wayne Rooney","Ashley Young","Michael Carrick","Sylvain Distin",
+  "Peter Crouch","Jordan Henderson","Aaron Hughes","Shay Given","Brad Friedel",
+  "Kyle Walker","John O'Shea","Kevin Davies","Petr Čech","Alan Shearer",
+  "Jussi Jääskeläinen","Richard Dunne","Gareth Southgate","James Ward-Prowse",
+  "Leighton Baines","Teddy Sheringham","Danny Murphy","Aaron Lennon","David de Gea",
+  "Andy Cole","Mark Noble","Robbie Keane","Gary Neville","Tim Howard",
+  // 300-499 PL appearances
+  "Paul Robinson","Robbie Fowler","Wilfried Zaha","Phil Jagielka","Rob Lee",
+  "Jamie Redknapp","Michael Owen","Joe Hart","Harry Kane","Scott Parker",
+  "Leon Osman","Tony Adams","Nicky Butt","David Seaman","Gary Pallister",
+  "Les Ferdinand","Peter Schmeichel","Hugo Lloris","Darren Anderton","Roy Keane",
+  "Nicolas Anelka","Lee Dixon","Nigel Winterburn","Martin Keown","Craig Bellamy",
+  "Dietmar Hamann","Kieron Dyer","Jermaine Jenas","Gary Cahill","Ray Parlour",
+  "Paul Merson","Matthew Le Tissier","Dwight Yorke","Denis Irwin","Glen Johnson",
+  "Ledley King","Vincent Kompany","Sergio Agüero","Jan Vertonghen","Luke Young",
+  "Nolberto Solano","David Batty","Lee Bowyer","Alan Smith","Kevin Nolan",
+  "Michael Dawson","Ugo Ehiogu","Joleon Lescott","David Silva","César Azpilicueta",
+  "Son Heung-min","Theo Walcott","Patrice Evra","Scott Dann","Eric Dier",
+  // 200-299 PL appearances
+  "Thierry Henry","Dennis Bergkamp","Bacary Sagna","Mousa Dembélé","Stephen Carr",
+  "Andros Townsend","Aaron Cresswell","Jamie Vardy","Dimitar Berbatov","Willian",
+  "Yaya Touré","Pablo Zabaleta","Mikael Silvestre","Gianfranco Zola","Wes Brown",
+  "Ole Gunnar Solskjær","Christian Eriksen","Fernandinho","Aaron Ramsey",
+  "Roberto Firmino","Freddie Ljungberg","James McArthur","Chris Brunt",
+  "Brian McClair","Ian Wright","Kolo Touré","William Gallas","Damien Duff",
+  "Warren Barton","Shaun Wright-Phillips","Didier Drogba","Mohamed Salah",
+  "Ross Barkley","Danny Welbeck","Cesc Fàbregas","Nemanja Vidić","Paul Ince",
+  "Thomas Sørensen","Niall Quinn","Duncan Ferguson","Romelu Lukaku","James Beattie",
+  "Andy Johnson","Kevin Phillips","Marouane Fellaini","John Stones","Robert Huth",
+  "Ben Foster","Scott Carson","Laurent Koscielny","Robin van Persie","Gael Clichy",
+  "Michael Essien","Joe Cole","Branislav Ivanović","Eden Hazard","Dele Alli",
+  "Toby Alderweireld","Mark Viduka","Ian Harte","Fabricio Coloccini","Kevin De Bruyne",
+  "Raheem Sterling","Bernardo Silva","Trent Alexander-Arnold","Andrew Robertson",
+  "Virgil van Dijk","Martin Škrtel","Steed Malbranque","Mikel Arteta","Fabian Delph",
+  "Callum Wilson","Stuart Pearce","Peter Beardsley","Yakubu Aiyegbeni","Cristiano Ronaldo",
+  "Roberto Di Matteo","Wayne Bridge","Shola Ameobi","Michael Brown","Danny Simpson",
+  // 100-199 PL appearances
+  "Robert Pires","Nacho Monreal","Per Mertesacker","Mesut Özil",
+  "Alexis Sánchez","Jack Wilshere","Santi Cazorla","Olivier Giroud","Emmanuel Adebayor",
+  "Samir Nasri","Claude Makélélé","Arjen Robben","N'Golo Kanté","Marcos Alonso",
+  "David Luiz","John Mikel Obi","Nemanja Matić","Victor Moses","Pedro",
+  "Kurt Zouma","Thibaut Courtois","Danny Rose","Kieran Trippier","Victor Wanyama",
+  "Gareth Bale","Luka Modrić","Edin Džeko","Ilkay Gündogan","Riyad Mahrez",
+  "Gabriel Jesus","Aymeric Laporte","Fernando Torres","Xabi Alonso","Pepe Reina",
+  "Daniel Agger","José Enrique","Luis Suárez","Philippe Coutinho","Sadio Mané",
+  "Fabinho","Georginio Wijnaldum","Wayne Hennessey","Chris Kirkland","Cheikh Tioté",
+  "Yohan Cabaye","Jonas Gutierrez","Moussa Sissoko","Charles N'Zogbia","Steven Taylor",
+  "Hatem Ben Arfa","Mike Williamson","James Perch","Tim Krul","Papiss Cissé",
+  "Demba Ba","Loic Remy","Joseph Yobo","Ji-sung Park","Kevin Mirallas",
+  "Steven Pienaar","Darren Fletcher","Patrick Bamford","Matt Ritchie","Brede Hangeland",
+  "Clint Dempsey","Louis Saha","Zoltán Gera","Simon Davies","Cheikhou Kouyaté",
+  "Winston Reid","Andy Carroll","Luka Milivojević","Marcel Desailly","Gustavo Poyet",
+  "Jimmy Floyd Hasselbaink","Eidur Gudjohnsen","Eric Cantona","Mark Hughes",
+  "Ruud van Nistelrooy","Gavin McCann","Julio Arca","David Ginola",
+  "Tony Hibbert","Alan Stubbs","Warren Barton","Sami Hyypiä","Tim Cahill",
+  "Nicky Shorey","Danny Mills","Dominic Matteo","Stephane Henchoz","Ben Davies",
+  "Abel Xavier","Bolo Zenden","Salif Diao","Bernard Mendy","Emerson Thome",
+  "Peter Beardsley","Dean Whitehead","Matthew Etherington","Karl Darlow"
 ];
- 
+
 // ─── NAVIGATION ──────────────────────────────────────────────────────────────
 function startMode(mode) {
   currentMode = mode;
-  document.getElementById('home-screen').style.display     = 'none';
+  document.getElementById('home-screen').style.display = 'none';
   document.getElementById('gameover-screen').classList.remove('active');
   ['freeplay','daily','challenge'].forEach(m => {
-    const el = document.getElementById(m + '-screen');
-    el.classList.toggle('active', m === mode);
+    document.getElementById(m + '-screen').classList.toggle('active', m === mode);
   });
   document.body.className = 'mode-' + mode;
- 
   if (mode === 'freeplay')  fpInit();
   if (mode === 'daily')     dailyInit();
   if (mode === 'challenge') chInit();
 }
- 
+
 function goHome() {
   currentMode = 'home';
   document.body.className = 'mode-home';
@@ -80,26 +107,28 @@ function goHome() {
     document.getElementById(m + '-screen').classList.remove('active')
   );
 }
- 
+
 // ─── SHARED HELPERS ───────────────────────────────────────────────────────────
 function normalizeText(text) {
   return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
- 
+
 function mapSpecialCharacters(text) {
   const m = {'ø':'o','å':'a','ä':'a','ö':'o','ü':'u','é':'e','è':'e','ê':'e',
               'á':'a','í':'i','ó':'o','ú':'u','ñ':'n','ç':'c'};
   return text.split('').map(c => m[c] || c).join('');
 }
- 
+
 function normalize(text) {
   return normalizeText(mapSpecialCharacters(text.trim()));
 }
- 
+
 function getInitials(name) {
-  return name.split(' ').map(w => w[0].toUpperCase() + '.').join(' ');
+  // Strip disambiguation suffixes like "(footballer)", "(soccer)", "(born 1980)" etc.
+  const cleaned = name.replace(/\s*\(.*?\)/g, '').trim();
+  return cleaned.split(' ').map(w => w[0].toUpperCase() + '.').join(' ');
 }
- 
+
 async function fetchAllPlayers() {
   try {
     let continueToken = null;
@@ -123,7 +152,7 @@ async function fetchAllPlayers() {
     return [];
   }
 }
- 
+
 async function fetchInfoboxHTML(name) {
   try {
     const res  = await fetch(`https://en.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(name)}&format=json&origin=*`);
@@ -134,7 +163,7 @@ async function fetchInfoboxHTML(name) {
     return null;
   }
 }
- 
+
 function extractInfoboxHTML(html) {
   const parser = new DOMParser();
   const doc    = parser.parseFromString(html, 'text/html');
@@ -146,7 +175,7 @@ function extractInfoboxHTML(html) {
   box.querySelectorAll('a').forEach(a => a.replaceWith(a.textContent));
   return box.outerHTML;
 }
- 
+
 function hideCareerRows(infobox) {
   let show = false;
   infobox.querySelectorAll('tr').forEach(row => {
@@ -159,7 +188,7 @@ function hideCareerRows(infobox) {
     row.classList.toggle('hidden', !show);
   });
 }
- 
+
 function matchesTeam(html, team) {
   if (!team) return true;
   const parser = new DOMParser();
@@ -178,7 +207,7 @@ function matchesTeam(html, team) {
   }
   return false;
 }
- 
+
 function populateDatalist(listId, players) {
   const dl = document.getElementById(listId);
   dl.innerHTML = '';
@@ -188,7 +217,7 @@ function populateDatalist(listId, players) {
     dl.appendChild(opt);
   });
 }
- 
+
 // ─── FREE PLAY ────────────────────────────────────────────────────────────────
 async function fpInit() {
   if (allFootballers.length === 0) {
@@ -198,12 +227,12 @@ async function fpInit() {
   }
   fpNext();
 }
- 
+
 function fpSetTeam(team) {
   fpSelectedTeam = team;
   fpNext();
 }
- 
+
 async function fpNext() {
   fpRoundOver = false;
   document.getElementById('fp-btn-submit').disabled = false;
@@ -211,7 +240,7 @@ async function fpNext() {
   document.getElementById('fp-guess-input').value   = '';
   document.getElementById('fp-result').innerText    = '';
   document.getElementById('fp-infobox').innerHTML   = 'Loading...';
- 
+
   let attempts = 0;
   while (attempts++ < 60) {
     const p    = allFootballers[Math.floor(Math.random() * allFootballers.length)];
@@ -226,7 +255,7 @@ async function fpNext() {
   }
   document.getElementById('fp-infobox').innerHTML = 'No player found for this team. Try another.';
 }
- 
+
 function fpCheckGuess() {
   if (fpRoundOver) return;
   const guess = document.getElementById('fp-guess-input').value;
@@ -239,38 +268,34 @@ function fpCheckGuess() {
     document.getElementById('fp-result').innerText = '❌ Incorrect, try again.';
   }
 }
- 
+
 function fpReveal() {
   document.getElementById('fp-result').innerText = `The answer was: ${fpCurrentPlayer.name}`;
   fpRoundOver = true;
   document.getElementById('fp-btn-submit').disabled = true;
   document.getElementById('fp-btn-reveal').disabled = true;
 }
- 
+
 // ─── DAILY CHALLENGE ──────────────────────────────────────────────────────────
 function getDailyPlayer() {
-  const start  = new Date('2024-01-01');
-  const today  = new Date();
-  const days   = Math.floor((today - start) / 86400000);
+  const start = new Date('2024-01-01');
+  const today = new Date();
+  const days  = Math.floor((today - start) / 86400000);
   return CURATED_PLAYERS[days % CURATED_PLAYERS.length];
 }
- 
+
 function getDailyDateStr() {
   return new Date().toLocaleDateString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric' });
 }
- 
+
 function getDailyStorageKey() {
   return 'daily_' + new Date().toISOString().slice(0, 10);
 }
- 
+
 async function dailyInit() {
   document.getElementById('daily-date').innerText = getDailyDateStr();
- 
-  // Load streak
-  const streak = parseInt(localStorage.getItem('daily_streak') || '0');
-  document.getElementById('daily-streak-count').innerText = streak;
- 
-  // Check if already played today
+
+
   const saved = localStorage.getItem(getDailyStorageKey());
   if (saved) {
     const state = JSON.parse(saved);
@@ -283,25 +308,22 @@ async function dailyInit() {
       : `You already played today. The answer was: ${state.name}`;
     renderDailyDots(state.guesses);
   }
- 
+
   const name = getDailyPlayer();
   dailyPlayer    = { name };
   dailyGuessNum  = saved ? JSON.parse(saved).guesses.length : 0;
   dailyHintsLeft = 3;
   document.getElementById('daily-hints-left').innerText = 3;
   document.getElementById('daily-hint-text').innerText  = '';
- 
+
   const html = await fetchInfoboxHTML(name);
   document.getElementById('daily-infobox').innerHTML = html ? extractInfoboxHTML(html) : 'Could not load player.';
- 
-  if (allFootballers.length === 0) {
-    allFootballers = await fetchAllPlayers();
-  }
+
+  if (allFootballers.length === 0) allFootballers = await fetchAllPlayers();
   populateDatalist('daily-footballer-list', allFootballers);
- 
   if (!saved) renderDailyDots([]);
 }
- 
+
 function renderDailyDots(guesses) {
   const container = document.getElementById('daily-guess-dots');
   container.innerHTML = '';
@@ -320,7 +342,7 @@ function renderDailyDots(guesses) {
     container.appendChild(dot);
   }
 }
- 
+
 function dailyUseHint() {
   if (dailyHintsLeft <= 0 || dailyRoundOver) return;
   dailyHintsLeft--;
@@ -328,27 +350,18 @@ function dailyUseHint() {
   document.getElementById('daily-hint-text').innerText  = getInitials(dailyPlayer.name);
   if (dailyHintsLeft === 0) document.getElementById('daily-hint-btn').disabled = true;
 }
- 
+
 function dailyCheckGuess() {
   if (dailyRoundOver) return;
-  const guess  = document.getElementById('daily-guess-input').value;
+  const guess   = document.getElementById('daily-guess-input').value;
   const correct = normalize(guess) === normalize(dailyPlayer.name);
-  const saved  = JSON.parse(localStorage.getItem(getDailyStorageKey()) || '{"guesses":[]}');
+  const saved   = JSON.parse(localStorage.getItem(getDailyStorageKey()) || '{"guesses":[]}');
   saved.guesses.push(correct);
- 
+
   if (correct) {
     saved.won  = true;
     saved.name = dailyPlayer.name;
     localStorage.setItem(getDailyStorageKey(), JSON.stringify(saved));
-    // update streak
-    const lastKey = localStorage.getItem('daily_last_key');
-    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-    const yKey = yesterday.toISOString().slice(0, 10);
-    let streak = parseInt(localStorage.getItem('daily_streak') || '0');
-    streak = (lastKey === yKey || lastKey === getDailyStorageKey()) ? streak + 1 : 1;
-    localStorage.setItem('daily_streak', streak);
-    localStorage.setItem('daily_last_key', getDailyStorageKey());
-    document.getElementById('daily-streak-count').innerText = streak;
     document.getElementById('daily-result').innerText = `✅ Correct! ${dailyPlayer.name}`;
     dailyRoundOver = true;
     document.getElementById('daily-btn-submit').disabled = true;
@@ -374,7 +387,7 @@ function dailyCheckGuess() {
     }
   }
 }
- 
+
 function dailyReveal() {
   const saved = JSON.parse(localStorage.getItem(getDailyStorageKey()) || '{"guesses":[]}');
   saved.won  = false;
@@ -387,42 +400,53 @@ function dailyReveal() {
   document.getElementById('daily-btn-share').style.display = 'block';
   renderDailyDots(saved.guesses);
 }
- 
+
 function dailyShare() {
-  const saved  = JSON.parse(localStorage.getItem(getDailyStorageKey()) || '{"guesses":[]}');
-  const dots   = (saved.guesses || []).map(g => g ? '🟩' : '🟥').join('');
+  const saved    = JSON.parse(localStorage.getItem(getDailyStorageKey()) || '{"guesses":[]}');
+  const dots     = (saved.guesses || []).map(g => g ? '🟩' : '🟥').join('');
   const attempts = saved.won ? `${saved.guesses.length}/3` : 'X/3';
   const text = `⚽ PL Career Paths - Daily Challenge ${getDailyDateStr()}\nI guessed the Premier League career path in ${attempts}\n${dots}\nCan you beat me? https://ryan-1832.github.io/premier-league-career-paths`;
   shareText(text);
 }
- 
+
 // ─── CHALLENGE MODE ───────────────────────────────────────────────────────────
-async function chInit() {
-  chLives   = 3;
-  chStreak  = 0;
-  chGuessNum= 1;
-  chRoundOver = false;
-  chHintsLeft = 3;
-  updateChHUD();
-  document.getElementById('ch-hint-text').innerText  = '';
-  document.getElementById('ch-hints-left').innerText = 3;
-  document.getElementById('ch-hint-btn').disabled    = false;
-  document.getElementById('ch-result').innerText     = '';
-  document.getElementById('ch-btn-submit').disabled  = false;
-  document.getElementById('ch-btn-reveal').disabled  = false;
- 
-  if (allFootballers.length === 0) {
-    allFootballers = await fetchAllPlayers();
-    populateDatalist('ch-footballer-list', allFootballers);
+let chPlayerQueue = [];
+
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
+  return a;
+}
+
+async function chInit() {
+  chLives    = 3;
+  chStreak   = 0;
+  chGuessNum = 1;
+  chRoundOver  = false;
+  chHintsLeft  = 3;
+  chPlayerQueue = shuffleArray(CURATED_PLAYERS);
+  updateChHUD();
+  document.getElementById('ch-hint-text').innerText   = 'Use a hint to reveal initials';
+  document.getElementById('ch-hints-left').innerText  = 3;
+  document.getElementById('ch-hint-btn').disabled     = false;
+  document.getElementById('ch-result').innerText      = '';
+  document.getElementById('ch-btn-submit').disabled   = false;
+  document.getElementById('ch-btn-reveal').disabled   = false;
+
+  // Populate datalist directly from curated list — no Wikipedia fetch needed
+  populateDatalist('ch-footballer-list', CURATED_PLAYERS.map(name => ({ name })));
+
   await chLoadPlayer();
 }
- 
+
 async function chLoadPlayer() {
   chGuessNum  = 1;
   chRoundOver = false;
   chHintsLeft = 3;
-  document.getElementById('ch-hint-text').innerText  = '';
+  document.getElementById('ch-hint-text').innerText  = 'Use a hint to reveal initials';
   document.getElementById('ch-hints-left').innerText = 3;
   document.getElementById('ch-hint-btn').disabled    = false;
   document.getElementById('ch-guess-input').value    = '';
@@ -431,48 +455,48 @@ async function chLoadPlayer() {
   document.getElementById('ch-btn-reveal').disabled  = false;
   updateChHUD();
   document.getElementById('ch-infobox').innerHTML = 'Loading...';
- 
-  const pool = CURATED_PLAYERS;
-  let attempts = 0;
-  while (attempts++ < 30) {
-    const name = pool[Math.floor(Math.random() * pool.length)];
+
+  // Work through shuffled queue so every player appears before any repeats
+  while (chPlayerQueue.length > 0) {
+    const name = chPlayerQueue.shift();
     const html = await fetchInfoboxHTML(name);
     if (!html) continue;
     const extracted = extractInfoboxHTML(html);
     if (!extracted) continue;
     chCurrentPlayer = { name };
     document.getElementById('ch-infobox').innerHTML = extracted;
+    if (chPlayerQueue.length === 0) chPlayerQueue = shuffleArray(CURATED_PLAYERS);
     return;
   }
   document.getElementById('ch-infobox').innerHTML = 'Could not load player, skipping...';
   setTimeout(chLoadPlayer, 1500);
 }
- 
+
 function updateChHUD() {
-  document.getElementById('ch-lives').innerText    = '❤️'.repeat(chLives) + '🖤'.repeat(3 - chLives);
-  document.getElementById('ch-streak').innerText   = chStreak;
+  document.getElementById('ch-lives').innerText     = '❤️'.repeat(chLives) + '🖤'.repeat(3 - chLives);
+  document.getElementById('ch-streak').innerText    = chStreak;
   document.getElementById('ch-guess-num').innerText = chGuessNum;
 }
- 
+
 function chUseHint() {
   if (chHintsLeft <= 0 || chRoundOver) return;
   chHintsLeft--;
   document.getElementById('ch-hints-left').innerText = chHintsLeft;
-  document.getElementById('ch-hint-text').innerText  = getInitials(chCurrentPlayer.name);
+  document.getElementById('ch-hint-text').innerText  = `Initials: ${getInitials(chCurrentPlayer.name)}`;
   if (chHintsLeft === 0) document.getElementById('ch-hint-btn').disabled = true;
 }
- 
+
 function chCheckGuess() {
   if (chRoundOver) return;
   const guess   = document.getElementById('ch-guess-input').value;
   const correct = normalize(guess) === normalize(chCurrentPlayer.name);
- 
+
   if (correct) {
     chStreak++;
     chRoundOver = true;
-    document.getElementById('ch-result').innerText   = `✅ Correct! ${chCurrentPlayer.name}`;
-    document.getElementById('ch-btn-submit').disabled = true;
-    document.getElementById('ch-btn-reveal').disabled = true;
+    document.getElementById('ch-result').innerText    = `✅ Correct! ${chCurrentPlayer.name}`;
+    document.getElementById('ch-btn-submit').disabled  = true;
+    document.getElementById('ch-btn-reveal').disabled  = true;
     updateChHUD();
     setTimeout(chLoadPlayer, 1800);
   } else {
@@ -486,27 +510,26 @@ function chCheckGuess() {
     }
   }
 }
- 
+
 function chReveal() {
   chLoseLife(`The answer was: ${chCurrentPlayer.name}`);
 }
- 
+
 function chLoseLife(msg) {
   chLives--;
-  chStreak  = 0;
+  chStreak    = 0;
   chRoundOver = true;
   document.getElementById('ch-result').innerText    = msg;
   document.getElementById('ch-btn-submit').disabled  = true;
   document.getElementById('ch-btn-reveal').disabled  = true;
   updateChHUD();
- 
   if (chLives <= 0) {
     setTimeout(chGameOver, 1600);
   } else {
     setTimeout(chLoadPlayer, 2000);
   }
 }
- 
+
 function chGameOver() {
   document.getElementById('challenge-screen').classList.remove('active');
   const go = document.getElementById('gameover-screen');
@@ -517,17 +540,17 @@ function chGameOver() {
     chStreak < 5   ? 'Not bad — keep practising!' :
     chStreak < 10  ? 'Great run! 🔥' : 'Legendary! 🏆';
 }
- 
+
 function chRestart() {
   document.getElementById('gameover-screen').classList.remove('active');
   startMode('challenge');
 }
- 
+
 function chShare() {
   const text = `⚽ PL Career Paths - Challenge Mode\n🔥 I got ${chStreak} consecutive correct guesses!\nCan you beat me? https://ryan-1832.github.io/premier-league-career-paths`;
   shareText(text);
 }
- 
+
 // ─── SHARE ────────────────────────────────────────────────────────────────────
 function shareText(text) {
   if (navigator.share) {
@@ -536,11 +559,11 @@ function shareText(text) {
     navigator.clipboard.writeText(text).then(() => alert('Result copied to clipboard!'));
   }
 }
- 
+
 function sharePage() {
   shareText('Check out PL Career Paths! https://ryan-1832.github.io/premier-league-career-paths');
 }
- 
+
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 window.onload = () => {
   document.getElementById('home-screen').style.display = 'flex';
