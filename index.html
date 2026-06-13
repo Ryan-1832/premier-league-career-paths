@@ -33,6 +33,7 @@
     body.mode-freeplay  { background-color: #1a6b1a; color: white; }
     body.mode-daily     { background-color: #0d1b3e; color: #f0d080; }
     body.mode-challenge { background-color: #1a0000; color: white; }
+    body.mode-crazy     { background-color: #1a0033; color: white; }
 
     h1 { text-align: center; margin-bottom: 24px; font-size: 1.8rem; }
 
@@ -43,7 +44,7 @@
       align-items: center;
       gap: 16px;
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
       margin-top: 40px;
     }
     #home-screen h1 { font-size: 2rem; }
@@ -61,9 +62,10 @@
       text-align: left;
     }
     .mode-card:hover { transform: scale(1.02); opacity: 0.92; }
-    .mode-card.green { background-color: #2e8b2e; color: white; }
-    .mode-card.navy  { background-color: #1a3a7a; color: #f0d080; }
-    .mode-card.red   { background-color: #8b0000; color: white; }
+    .mode-card.green  { background-color: #2e8b2e; color: white; }
+    .mode-card.navy   { background-color: #1a3a7a; color: #f0d080; }
+    .mode-card.red    { background-color: #8b0000; color: white; }
+    .mode-card.purple { background-color: #4a0080; color: white; }
     .mode-card .card-sub { font-size: 0.85rem; font-weight: normal; margin-top: 4px; opacity: 0.85; }
 
     /* GAME SCREENS */
@@ -84,6 +86,21 @@
     }
     .back-btn:hover { opacity: 1; }
 
+    /* INTRO SCREEN */
+    .intro-box {
+      background: rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+    .intro-box h2 { margin-bottom: 12px; font-size: 1.3rem; }
+    .intro-box ul { padding-left: 20px; }
+    .intro-box ul li { margin-bottom: 6px; }
+    .intro-question { text-align: center; font-size: 1.1rem; font-weight: bold; margin: 16px 0 12px; }
+    .intro-btns { display: flex; gap: 12px; }
+    .intro-btns .btn { flex: 1; }
+
     /* HUD */
     .hud {
       display: flex;
@@ -93,8 +110,21 @@
       font-size: 1rem;
       font-weight: bold;
       min-height: 32px;
+      flex-wrap: wrap;
+      gap: 6px;
     }
     .lives-display { font-size: 1.3rem; letter-spacing: 4px; }
+
+    /* TIMER */
+    .timer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
 
     /* INFOBOX */
     .infobox-wrap {
@@ -131,13 +161,7 @@
     }
     .hint-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     .hint-btn:hover:not(:disabled) { background: rgba(255,255,255,0.28); }
-    .hint-text {
-      font-size: 1rem;
-      font-weight: bold;
-      letter-spacing: 2px;
-      opacity: 0.9;
-      font-style: italic;
-    }
+    .hint-text { font-size: 1rem; font-weight: bold; letter-spacing: 2px; opacity: 0.9; font-style: italic; }
 
     /* INPUTS */
     select, input {
@@ -166,38 +190,24 @@
     }
     .btn:hover:not(:disabled) { opacity: 0.82; }
     .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-    /* Free play buttons — white text on dark backgrounds, no green */
-    .btn-submit   { background: #1a1a2e; color: white; }
-    .btn-reveal   { background: #4a4a6a; color: white; }
-    .btn-next     { background: #2c2c54; color: white; }
-    .btn-share    { background: #1565c0; color: white; }
-    .btn-danger   { background: #c0392b; color: white; }
-    .btn-daily-share { background: #b8860b; color: white; }
+    .btn-submit  { background: #1a1a2e; color: white; }
+    .btn-reveal  { background: #4a4a6a; color: white; }
+    .btn-next    { background: #2c2c54; color: white; }
+    .btn-share   { background: #1565c0; color: white; }
+    .btn-danger  { background: #c0392b; color: white; }
+    .btn-gold    { background: #b8860b; color: white; }
+    .btn-purple  { background: #4a0080; color: white; }
+    .btn-yes     { background: #1a6b1a; color: white; }
+    .btn-no      { background: #6b1a1a; color: white; }
 
     /* RESULT */
-    #fp-result, #daily-result, #ch-result {
+    .result-text {
       text-align: center;
       font-size: 1.1rem;
       font-weight: bold;
       min-height: 28px;
       margin: 6px 0 10px;
     }
-
-    /* GAME OVER */
-    #gameover-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      text-align: center;
-      width: 100%;
-      max-width: 400px;
-      margin-top: 40px;
-    }
-    #gameover-screen.active { display: flex; }
-    #gameover-screen h2 { font-size: 2rem; }
-    .final-score { font-size: 3rem; font-weight: bold; }
 
     /* DAILY */
     .guess-dots { display: flex; gap: 8px; justify-content: center; margin: 8px 0 12px; }
@@ -211,7 +221,7 @@
     .guess-dot.wrong   { background: #c0392b; }
     .guess-dot.current { background: rgba(255,255,255,0.4); }
 
-    .daily-streak-bar {
+    .daily-info-bar {
       display: flex;
       justify-content: space-between;
       background: rgba(255,255,255,0.1);
@@ -220,6 +230,21 @@
       margin-bottom: 12px;
       font-size: 0.9rem;
     }
+
+    /* GAME OVER */
+    .gameover-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+      margin-top: 40px;
+    }
+    .gameover-screen.active { display: flex; }
+    .gameover-screen h2 { font-size: 2rem; }
+    .final-score { font-size: 3rem; font-weight: bold; }
 
     @media (max-width: 480px) {
       h1 { font-size: 1.4rem; }
@@ -235,15 +260,19 @@
     <p>Guess the Premier League player from their career path</p>
     <button class="mode-card green" onclick="startMode('freeplay')">
       🟢 Free Play
-      <div class="card-sub">Filter by team · No pressure · Unlimited</div>
+      <div class="card-sub">Filter by team · Reveal initials · No pressure</div>
     </button>
     <button class="mode-card navy" onclick="startMode('daily')">
       📅 Daily Challenge
-      <div class="card-sub">One player per day · Same for everyone · Share your result</div>
+      <div class="card-sub">One player per day · Reveal initials costs a life · Share your result</div>
     </button>
     <button class="mode-card red" onclick="startMode('challenge')">
       ❤️ Challenge Mode
-      <div class="card-sub">3 lives · 3 guesses per player · How long can you last?</div>
+      <div class="card-sub">3 lives · 3 guesses · 5 hints for the session · Streak tracker</div>
+    </button>
+    <button class="mode-card purple" onclick="startMode('crazy')">
+      💀 Crazy Mode
+      <div class="card-sub">Clubs blurred · Optional timer · How far can you go?</div>
     </button>
   </div>
 
@@ -271,27 +300,30 @@
       <option>Watford</option><option>West Bromwich Albion</option><option>West Ham United</option>
       <option>Wigan Athletic</option><option>Wimbledon</option><option>Wolverhampton Wanderers</option>
     </select>
+    <div class="hint-area">
+      <button class="hint-btn" id="fp-btn-hint" onclick="fpUseHint()">💡 Reveal Initials</button>
+      <span class="hint-text" id="fp-hint-text"></span>
+    </div>
     <div class="infobox-wrap" id="fp-infobox">Loading...</div>
     <input list="fp-footballer-list" type="text" id="fp-guess-input" placeholder="Guess the footballer">
     <datalist id="fp-footballer-list"></datalist>
-    <div id="fp-result"></div>
+    <div class="result-text" id="fp-result"></div>
     <button class="btn btn-submit" id="fp-btn-submit" onclick="fpCheckGuess()">Submit Guess</button>
     <button class="btn btn-reveal" id="fp-btn-reveal" onclick="fpReveal()">Reveal Answer</button>
-    <button class="btn btn-next" onclick="fpNext()">Next Player</button>
-    <button class="btn btn-share" onclick="sharePage()">Share</button>
+    <button class="btn btn-next"   onclick="fpNext()">Next Player</button>
+    <button class="btn btn-share"  onclick="sharePage()">Share</button>
   </div>
 
   <!-- DAILY CHALLENGE -->
   <div id="daily-screen" class="game-screen">
     <button class="back-btn" onclick="goHome()">← Back</button>
     <h1>Daily Challenge</h1>
-    <div class="daily-streak-bar">
+    <div class="daily-info-bar">
       <span>📅 <span id="daily-date"></span></span>
+      <span id="daily-lives">❤️❤️❤️</span>
     </div>
     <div class="hint-area">
-      <button class="hint-btn" id="daily-hint-btn" onclick="dailyUseHint()">
-        💡 Reveal Initials (<span id="daily-hints-left">3</span> left)
-      </button>
+      <button class="hint-btn" id="daily-btn-hint" onclick="dailyUseHint()">💡 Reveal Initials (costs a life)</button>
       <span class="hint-text" id="daily-hint-text"></span>
     </div>
     <div class="infobox-wrap" id="daily-infobox">Loading...</div>
@@ -302,10 +334,10 @@
     </div>
     <input list="daily-footballer-list" type="text" id="daily-guess-input" placeholder="Guess the footballer">
     <datalist id="daily-footballer-list"></datalist>
-    <div id="daily-result"></div>
+    <div class="result-text" id="daily-result"></div>
     <button class="btn btn-submit" id="daily-btn-submit" onclick="dailyCheckGuess()">Submit Guess</button>
     <button class="btn btn-reveal" id="daily-btn-reveal" onclick="dailyReveal()">Reveal Answer</button>
-    <button class="btn btn-daily-share" id="daily-btn-share" style="display:none" onclick="dailyShare()">📤 Share Result</button>
+    <button class="btn btn-gold"   id="daily-btn-share" style="display:none" onclick="dailyShare()">📤 Share Result</button>
   </div>
 
   <!-- CHALLENGE MODE -->
@@ -318,27 +350,83 @@
       <div>Guess: <span id="ch-guess-num">1</span>/3</div>
     </div>
     <div class="hint-area">
-      <button class="hint-btn" id="ch-hint-btn" onclick="chUseHint()">
-        💡 Reveal Initials (<span id="ch-hints-left">3</span> left)
+      <button class="hint-btn" id="ch-btn-hint" onclick="chUseHint()">
+        💡 Reveal Initials (<span id="ch-hints-left">5</span> left)
       </button>
-      <span class="hint-text" id="ch-hint-text">Use a hint to reveal initials</span>
+      <span class="hint-text" id="ch-hint-text"></span>
     </div>
     <div class="infobox-wrap" id="ch-infobox">Loading...</div>
     <input list="ch-footballer-list" type="text" id="ch-guess-input" placeholder="Guess the footballer">
     <datalist id="ch-footballer-list"></datalist>
-    <div id="ch-result"></div>
+    <div class="result-text" id="ch-result"></div>
     <button class="btn btn-submit" id="ch-btn-submit" onclick="chCheckGuess()">Submit Guess</button>
-    <button class="btn btn-danger"  id="ch-btn-reveal" onclick="chReveal()">Reveal Answer (lose a life)</button>
+    <button class="btn btn-danger" id="ch-btn-reveal" onclick="chReveal()">Reveal Answer (lose a life)</button>
   </div>
 
-  <!-- GAME OVER -->
-  <div id="gameover-screen">
+  <!-- CRAZY MODE INTRO -->
+  <div id="cz-intro-screen" class="game-screen">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h1>💀 Crazy Mode</h1>
+    <div class="intro-box">
+      <h2>How it works</h2>
+      <ul>
+        <li>🔵 <strong>Clubs are blurred</strong> — 1 club hidden if 8 or fewer clubs, 2 hidden if 9 or more</li>
+        <li>❤️ <strong>3 lives</strong> — lose one for wrong answers, reveals, or running out of guesses</li>
+        <li>🎯 <strong>3 guesses</strong> per player</li>
+        <li>💡 <strong>Reveal Initials</strong> — removes 10 seconds if timer is on, free if timer is off</li>
+        <li>🔥 <strong>Streak tracked</strong> — beat your best!</li>
+      </ul>
+    </div>
+    <div class="intro-question">Would you like a 30 second timer?</div>
+    <div class="intro-btns">
+      <button class="btn btn-yes" onclick="czStartGame(true)">⏱️ Yes, add timer</button>
+      <button class="btn btn-no"  onclick="czStartGame(false)">🚫 No timer</button>
+    </div>
+  </div>
+
+  <!-- CRAZY MODE GAME -->
+  <div id="crazy-screen" class="game-screen">
+    <button class="back-btn" onclick="goHome()">← Back</button>
+    <h1>💀 Crazy Mode</h1>
+    <div class="hud">
+      <div class="lives-display" id="cz-lives">❤️❤️❤️</div>
+      <div>🔥 Streak: <span id="cz-streak">0</span></div>
+      <div>Guess: <span id="cz-guess-num">1</span>/3</div>
+    </div>
+    <div class="timer-bar" id="cz-timer-bar" style="display:none">
+      ⏱️ <span id="cz-timer">30s</span>
+    </div>
+    <div class="hint-area">
+      <button class="hint-btn" id="cz-btn-hint" onclick="czUseHint()">💡 Reveal Initials</button>
+      <span class="hint-text" id="cz-hint-text"></span>
+    </div>
+    <div class="infobox-wrap" id="cz-infobox">Loading...</div>
+    <input list="cz-footballer-list" type="text" id="cz-guess-input" placeholder="Guess the footballer">
+    <datalist id="cz-footballer-list"></datalist>
+    <div class="result-text" id="cz-result"></div>
+    <button class="btn btn-submit" id="cz-btn-submit" onclick="czCheckGuess()">Submit Guess</button>
+    <button class="btn btn-danger" id="cz-btn-reveal" onclick="czReveal()">Reveal Answer (lose a life)</button>
+  </div>
+
+  <!-- CHALLENGE GAME OVER -->
+  <div id="gameover-screen" class="gameover-screen">
     <h2>💀 Game Over</h2>
-    <div>Final streak</div>
+    <div>Best streak this session</div>
     <div class="final-score" id="gameover-score">0</div>
     <div id="gameover-msg" style="font-size:1.2rem"></div>
     <button class="btn btn-submit" style="max-width:220px" onclick="chRestart()">🔄 Play Again</button>
     <button class="btn btn-share"  style="max-width:220px" onclick="chShare()">📤 Share Result</button>
+    <button class="btn btn-reveal" style="max-width:220px" onclick="goHome()">🏠 Home</button>
+  </div>
+
+  <!-- CRAZY GAME OVER -->
+  <div id="cz-gameover-screen" class="gameover-screen">
+    <h2>💀 Game Over</h2>
+    <div>Best streak this session</div>
+    <div class="final-score" id="cz-gameover-score">0</div>
+    <div id="cz-gameover-msg" style="font-size:1.2rem"></div>
+    <button class="btn btn-purple" style="max-width:220px" onclick="czRestart()">🔄 Play Again</button>
+    <button class="btn btn-share"  style="max-width:220px" onclick="czShare()">📤 Share Result</button>
     <button class="btn btn-reveal" style="max-width:220px" onclick="goHome()">🏠 Home</button>
   </div>
 
